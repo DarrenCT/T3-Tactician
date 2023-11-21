@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class TicTacToe {
 
@@ -11,11 +11,26 @@ public class TicTacToe {
                 { ' ', '|', ' ', '|', ' ' }, };
         printGameBoard(gameBoard);
         // Scan user input, prompt for input between 1-9
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Enter your placement (1-9)");
-        int position = scan.nextInt();
 
-        System.out.println(position);
+        while (true) {
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Enter your placement (1-9)");
+            int playerPos = scan.nextInt();
+
+            // System.out.println(position);
+
+            placePiece(gameBoard, playerPos, "player");
+            System.out.println();
+
+            Random rand = new Random();
+            int cpuPos = rand.nextInt(9) + 1;
+
+            placePiece(gameBoard, cpuPos, "cpu");
+
+            printGameBoard(gameBoard);
+            System.out.println();
+        }
+
     }
 
     public static void printGameBoard(char[][] gameBoard) {
@@ -28,7 +43,7 @@ public class TicTacToe {
     }
 
     public static void placePiece(char[][] gameBoard, int position, String user) {
-        char symbol = 'X';
+        char symbol = ' ';
         if (user.equals("player")) {
             symbol = 'X';
         } else if (user.equals("cpu")) {
@@ -66,7 +81,6 @@ public class TicTacToe {
                 break;
         }
 
-        printGameBoard(gameBoard);
     }
 
 }
