@@ -12,38 +12,40 @@ public class TicTacToe {
                 { '-', '+', '-', '+', '-' },
                 { ' ', '|', ' ', '|', ' ' }, };
         printGameBoard(gameBoard);
-        // Scan user input, prompt for input between 1-9
 
         while (true) {
+        	//prompt human player for input
             Scanner scan = new Scanner(System.in);
             System.out.println("Enter your placement (1-9)");
             int playerPos = scan.nextInt();
-
+            //make sure human player chooses an empty position, else prompt for another input
             while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
                 System.out.println("Position taken, enter valid position");
                 playerPos = scan.nextInt();
             }
-
+            //place piece to the desired position
             placePiece(gameBoard, playerPos, "player");
+            //check to see if the move results in a winning condition
             String result = checkWinner();
             if (result.length() > 0) {
                 System.out.println(result);
                 break;
             }
             System.out.println();
-
+            
+            //generates a random position for cpu player
             Random rand = new Random();
             int cpuPos = rand.nextInt(9) + 1;
-
+            //make sure cpu player chooses an empty position, else generate a new position
             while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
                 cpuPos = rand.nextInt(9) + 1;
             }
 
             placePiece(gameBoard, cpuPos, "cpu");
-
+            //print the updated gameboard after every turn
             printGameBoard(gameBoard);
             System.out.println();
-
+            //check to see if there is a winner after cpu's turn
             result = checkWinner();
             if (result.length() > 0) {
                 System.out.println(result);
@@ -64,6 +66,7 @@ public class TicTacToe {
     }
 
     public static void placePiece(char[][] gameBoard, int position, String user) {
+    	//set piece symbol based on the current player
         char symbol = ' ';
         if (user.equals("player")) {
             symbol = 'X';
@@ -72,6 +75,7 @@ public class TicTacToe {
             symbol = 'O';
             cpuPositions.add(position);
         }
+        //place piece on the corresponding location on the game board
         switch (position) {
             case 1:
                 gameBoard[0][0] = symbol;
@@ -107,6 +111,7 @@ public class TicTacToe {
     }
 
     public static String checkWinner() {
+    	//define winning conditions
         List topRow = Arrays.asList(1, 2, 3);
         List midRow = Arrays.asList(4, 5, 6);
         List botRow = Arrays.asList(7, 8, 9);
@@ -115,7 +120,8 @@ public class TicTacToe {
         List rightCol = Arrays.asList(3, 6, 9);
         List mainDiag = Arrays.asList(1, 5, 9);
         List secDiag = Arrays.asList(3, 5, 7);
-
+        
+        //Create a list of wining conditions and add all winning conditions to the list
         List<List> winningConditions = new ArrayList<List>();
         winningConditions.add(topRow);
         winningConditions.add(midRow);
@@ -125,7 +131,7 @@ public class TicTacToe {
         winningConditions.add(rightCol);
         winningConditions.add(mainDiag);
         winningConditions.add(secDiag);
-
+        //check to see if current player positions contains all position on game board corresponding to a giving win con 
         for (List l : winningConditions) {
             if (playerPositions.containsAll(l)) {
                 return "You won!!!";
