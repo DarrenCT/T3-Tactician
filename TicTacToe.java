@@ -1,11 +1,11 @@
 import java.util.*;
 
 public class TicTacToe {
-	static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
-	static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
-	static final char player = 'X', ai ='0';
+	private static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
+	private static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
+	private static char[] gameBoard = new char[9];
+	private static final char player = 'X', ai ='0';
 	public static void main(String[] args) {
-		char[] gameBoard = new char[9];
 		//initialize the empty gameBoard
 		for(int i = 0; i < gameBoard.length; i++) {
 			gameBoard[i] = ' ';
@@ -13,7 +13,7 @@ public class TicTacToe {
 		printGameBoard(gameBoard);
 
 		while (true) {
-//			// prompt human player for input
+			// prompt human player for input
 			Scanner scan = new Scanner(System.in);
 			System.out.println("Enter your placement (1-9)");
 			int playerPos = scan.nextInt();
@@ -22,36 +22,29 @@ public class TicTacToe {
 				System.out.println("Position taken, enter valid position");
 				playerPos = scan.nextInt();
 			}
-//			// place piece to the desired position
+			// place piece to the desired position
 			placePiece(gameBoard, playerPos, "player");
 			printGameBoard(gameBoard);
-//			// check to see if the move results in a winning condition
-//			String result = checkWinner();
-//			if (result.length() > 0) {
-//				System.out.println(result);
-//				break;
-//			}
-//			System.out.println();
-//
-//			// generates a random position for cpu player
-//			Random rand = new Random();
-//			int cpuPos = rand.nextInt(9) + 1;
-//			// make sure cpu player chooses an empty position, else generate a new position
-//			while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
-//				cpuPos = rand.nextInt(9) + 1;
-//			}
-//			
-//
-//			placePiece(gameBoard, cpuPos, "cpu");
-//			// print the updated gameboard after every turn
-//			printGameBoard(gameBoard);
-//			System.out.println();
-//			// check to see if there is a winner after cpu's turn
-//			result = checkWinner();
-//			if (result.length() > 0) {
-//				System.out.println(result);
-//				break;
-//			}
+			// check to see if the move results in a winning condition
+			String result = checkWinner();
+			if (result.length() > 0) {
+				System.out.println(result);
+				break;
+			}
+			System.out.println();
+
+			int aiPos = 0;
+
+			placePiece(gameBoard, aiPos, "cpu");
+			// print the updated gameboard after every turn
+			printGameBoard(gameBoard);
+			System.out.println();
+			// check to see if there is a winner after cpu's turn
+			result = checkWinner();
+			if (result.length() > 0) {
+				System.out.println(result);
+				break;
+			}
 		}
 
 	}
@@ -78,10 +71,10 @@ public class TicTacToe {
 		// set piece symbol based on the current player
 		char symbol = ' ';
 		if (user.equals("player")) {
-			symbol = 'X';
+			symbol = player;
 			playerPositions.add(position);
-		} else if (user.equals("cpu")) {
-			symbol = 'O';
+		} else if (user.equals("ai")) {
+			symbol = ai;
 			cpuPositions.add(position);
 		}
 		// place piece on the corresponding location on the game board
@@ -187,6 +180,23 @@ public class TicTacToe {
     }
 	
 	public static int evaluate() {
+		for (int i = 0; i < 3; i++) {
+            if (gameBoard[3 * i] == gameBoard[3 * i + 1] && gameBoard[3 * i + 1] == gameBoard[3 * i + 2]) {
+                if (gameBoard[3 * i] == ai) return +10;
+                else if (gameBoard[3 * i] == player) return -10;
+            }
+
+            if (gameBoard[i] == gameBoard[i + 3] && gameBoard[i + 3] == gameBoard[i + 6]) {
+                if (gameBoard[i] == ai) return +10;
+                else if (gameBoard[i] == player) return -10;
+            }
+        }
+
+        // Checking Diagonals for X or O victory
+        if (gameBoard[0] == gameBoard[4] && gameBoard[4] == gameBoard[8] || gameBoard[2] == gameBoard[4] && gameBoard[4] == gameBoard[6]) {
+            if (gameBoard[4] == ai) return +10;
+            else if (gameBoard[4] == player) return -10;
+        }
 		return 0;
 	}
 	
