@@ -5,63 +5,71 @@ public class TicTacToe {
 	static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
 	static final char human = 'X', ai ='0';
 	public static void main(String[] args) {
-		char[][] gameBoard = {{ ' ', '|', ' ', '|', ' ' }, 
-								{ '-', '+', '-', '+', '-' }, 
-								{ ' ', '|', ' ', '|', ' ' },
-								{ '-', '+', '-', '+', '-' }, 
-								{ ' ', '|', ' ', '|', ' ' }, };
+		char[] gameBoard = new char[9];
+		//initialize the empty gameBoard
+		for(int i = 0; i < gameBoard.length; i++) {
+			gameBoard[i] = ' ';
+		}
 		printGameBoard(gameBoard);
 
-		while (true) {
-			// prompt human player for input
-			Scanner scan = new Scanner(System.in);
-			System.out.println("Enter your placement (1-9)");
-			int playerPos = scan.nextInt();
+//		while (true) {
+//			// prompt human player for input
+//			Scanner scan = new Scanner(System.in);
+//			System.out.println("Enter your placement (1-9)");
+//			int playerPos = scan.nextInt();
 			// make sure human player chooses an empty position, else prompt for another
 			// input
-			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
-				System.out.println("Position taken, enter valid position");
-				playerPos = scan.nextInt();
-			}
-			// place piece to the desired position
-			placePiece(gameBoard, playerPos, "player");
-			// check to see if the move results in a winning condition
-			String result = checkWinner();
-			if (result.length() > 0) {
-				System.out.println(result);
-				break;
-			}
-			System.out.println();
-
-			// generates a random position for cpu player
-			Random rand = new Random();
-			int cpuPos = rand.nextInt(9) + 1;
-			// make sure cpu player chooses an empty position, else generate a new position
-			while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
-				cpuPos = rand.nextInt(9) + 1;
-			}
-			
-
-			placePiece(gameBoard, cpuPos, "cpu");
-			// print the updated gameboard after every turn
-			printGameBoard(gameBoard);
-			System.out.println();
-			// check to see if there is a winner after cpu's turn
-			result = checkWinner();
-			if (result.length() > 0) {
-				System.out.println(result);
-				break;
-			}
-		}
+//			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
+//				System.out.println("Position taken, enter valid position");
+//				playerPos = scan.nextInt();
+//			}
+//			// place piece to the desired position
+//			placePiece(gameBoard, playerPos, "player");
+//			// check to see if the move results in a winning condition
+//			String result = checkWinner();
+//			if (result.length() > 0) {
+//				System.out.println(result);
+//				break;
+//			}
+//			System.out.println();
+//
+//			// generates a random position for cpu player
+//			Random rand = new Random();
+//			int cpuPos = rand.nextInt(9) + 1;
+//			// make sure cpu player chooses an empty position, else generate a new position
+//			while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)) {
+//				cpuPos = rand.nextInt(9) + 1;
+//			}
+//			
+//
+//			placePiece(gameBoard, cpuPos, "cpu");
+//			// print the updated gameboard after every turn
+//			printGameBoard(gameBoard);
+//			System.out.println();
+//			// check to see if there is a winner after cpu's turn
+//			result = checkWinner();
+//			if (result.length() > 0) {
+//				System.out.println(result);
+//				break;
+//			}
+//		}
 
 	}
 
-	public static void printGameBoard(char[][] gameBoard) {
-		for (char[] row : gameBoard) {
-			for (char c : row) {
-				System.out.print(c);
+	public static void printGameBoard(char[] gameBoard) {
+		for(int i = 0; i < gameBoard.length; i++) {
+			if(i == 0 || i == 3 || i == 6) {
+				System.out.print(gameBoard[i]);
+				System.out.print('|');
+			} else if (i == 1 || i == 4 || i == 7) {
+				System.out.print(gameBoard[i]);
+				System.out.print('|');
+			} else if (i == 2 || i == 5) {
+				System.out.println(gameBoard[i]);
+				System.out.println("-+-+-");
+			} else {
+				System.out.print(gameBoard[i]);
 			}
-			System.out.println();
 		}
 	}
 
