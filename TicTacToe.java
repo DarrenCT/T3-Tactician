@@ -3,7 +3,7 @@ import java.util.*;
 public class TicTacToe {
 	static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
 	static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
-	static final char human = 'X', ai ='0';
+	static final char player = 'X', ai ='0';
 	public static void main(String[] args) {
 		char[] gameBoard = new char[9];
 		//initialize the empty gameBoard
@@ -12,19 +12,19 @@ public class TicTacToe {
 		}
 		printGameBoard(gameBoard);
 
-//		while (true) {
+		while (true) {
 //			// prompt human player for input
-//			Scanner scan = new Scanner(System.in);
-//			System.out.println("Enter your placement (1-9)");
-//			int playerPos = scan.nextInt();
-			// make sure human player chooses an empty position, else prompt for another
-			// input
-//			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
-//				System.out.println("Position taken, enter valid position");
-//				playerPos = scan.nextInt();
-//			}
+			Scanner scan = new Scanner(System.in);
+			System.out.println("Enter your placement (1-9)");
+			int playerPos = scan.nextInt();
+			// make sure human player chooses an empty position, else prompt for another input
+			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
+				System.out.println("Position taken, enter valid position");
+				playerPos = scan.nextInt();
+			}
 //			// place piece to the desired position
-//			placePiece(gameBoard, playerPos, "player");
+			placePiece(gameBoard, playerPos, "player");
+			printGameBoard(gameBoard);
 //			// check to see if the move results in a winning condition
 //			String result = checkWinner();
 //			if (result.length() > 0) {
@@ -52,7 +52,7 @@ public class TicTacToe {
 //				System.out.println(result);
 //				break;
 //			}
-//		}
+		}
 
 	}
 
@@ -71,9 +71,10 @@ public class TicTacToe {
 				System.out.print(gameBoard[i]);
 			}
 		}
+		System.out.println();
 	}
 
-	public static void placePiece(char[][] gameBoard, int position, String user) {
+	public static void placePiece(char[] gameBoard, int position, String user) {
 		// set piece symbol based on the current player
 		char symbol = ' ';
 		if (user.equals("player")) {
@@ -86,31 +87,31 @@ public class TicTacToe {
 		// place piece on the corresponding location on the game board
 		switch (position) {
 		case 1:
-			gameBoard[0][0] = symbol;
+			gameBoard[0] = symbol;
 			break;
 		case 2:
-			gameBoard[0][2] = symbol;
+			gameBoard[1] = symbol;
 			break;
 		case 3:
-			gameBoard[0][4] = symbol;
+			gameBoard[2] = symbol;
 			break;
 		case 4:
-			gameBoard[2][0] = symbol;
+			gameBoard[3] = symbol;
 			break;
 		case 5:
-			gameBoard[2][2] = symbol;
+			gameBoard[4] = symbol;
 			break;
 		case 6:
-			gameBoard[2][4] = symbol;
+			gameBoard[5] = symbol;
 			break;
 		case 7:
-			gameBoard[4][0] = symbol;
+			gameBoard[6] = symbol;
 			break;
 		case 8:
-			gameBoard[4][2] = symbol;
+			gameBoard[7] = symbol;
 			break;
 		case 9:
-			gameBoard[4][4] = symbol;
+			gameBoard[8] = symbol;
 			break;
 		default:
 			break;
@@ -175,7 +176,7 @@ public class TicTacToe {
             int bestScore = Integer.MAX_VALUE;
             for (int i = 0; i < board.length; i++) {
                 if (board[i] == ' ') {
-                    board[i] = human;
+                    board[i] = player;
                     int currentScore = minimax(board, depth + 1, true);
                     board[i] = ' ';
                     bestScore = Math.min(currentScore, bestScore);
