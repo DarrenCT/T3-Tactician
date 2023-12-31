@@ -2,10 +2,13 @@ import java.util.*;
 
 public class TicTacToe {
 	private static ArrayList<Integer> playerPositions = new ArrayList<Integer>();
-	private static ArrayList<Integer> cpuPositions = new ArrayList<Integer>();
+	private static ArrayList<Integer> aiPositions = new ArrayList<Integer>();
+	private static List<List> winningConditions = new ArrayList<List>();
 	private static char[] gameBoard = new char[9];
-	private static final char player = 'X', ai ='0';
+	private static final char player = 'X', ai ='O';
+	
 	public static void main(String[] args) {
+		initiateWinCon();
 		//initialize the empty gameBoard
 		for(int i = 0; i < gameBoard.length; i++) {
 			gameBoard[i] = ' ';
@@ -18,30 +21,46 @@ public class TicTacToe {
 			System.out.println("Enter your placement (1-9)");
 			int playerPos = scan.nextInt();
 			// make sure human player chooses an empty position, else prompt for another input
-			while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)) {
+			while (playerPositions.contains(playerPos) || aiPositions.contains(playerPos)) {
 				System.out.println("Position taken, enter valid position");
 				playerPos = scan.nextInt();
 			}
 			// place piece to the desired position
 			placePiece(gameBoard, playerPos, "player");
-			printGameBoard(gameBoard);
 			// check to see if the move results in a winning condition
 			String result = checkWinner();
-			if (result.length() > 0) {
+			if (!result.isEmpty()) {
 				System.out.println(result);
 				break;
 			}
 			System.out.println();
 
-			int aiPos = 0;
+			int bestScore = Integer.MIN_VALUE;
+	        int bestMove = -1;
 
-			placePiece(gameBoard, aiPos, "cpu");
-			// print the updated gameboard after every turn
-			printGameBoard(gameBoard);
-			System.out.println();
-			// check to see if there is a winner after cpu's turn
+	        for (int i = 0; i < gameBoard.length; i++) {
+	            if (gameBoard[i] == ' ') {
+	            	//guess next move
+	                gameBoard[i] = ai;
+	                int score = minimax(gameBoard, 0, false);
+	                //undo guessing
+	                gameBoard[i] = ' ';
+
+	                if (score > bestScore) {
+	                    bestScore = score;
+	                    bestMove = i + 1;
+	                }
+	            }
+	        }
+
+	        if (bestMove != -1) {
+	        	 placePiece(gameBoard, bestMove, "ai");
+	        	
+	        }
+	        printGameBoard(gameBoard);
+			// check to see if there is a winner after ai's turn
 			result = checkWinner();
-			if (result.length() > 0) {
+			if (!result.isEmpty()) {
 				System.out.println(result);
 				break;
 			}
@@ -75,9 +94,9 @@ public class TicTacToe {
 			playerPositions.add(position);
 		} else if (user.equals("ai")) {
 			symbol = ai;
-			cpuPositions.add(position);
+			aiPositions.add(position);
 		}
-		// place piece on the corresponding location on the game board
+		// place piece on the corresponding location on the gameboard
 		switch (position) {
 		case 1:
 			gameBoard[0] = symbol;
@@ -112,35 +131,37 @@ public class TicTacToe {
 
 	}
 
-	public static String checkWinner() {
+	public static void initiateWinCon() {
 		// define winning conditions
-		List topRow = Arrays.asList(1, 2, 3);
-		List midRow = Arrays.asList(4, 5, 6);
-		List botRow = Arrays.asList(7, 8, 9);
-		List leftCol = Arrays.asList(1, 4, 7);
-		List midCol = Arrays.asList(2, 5, 8);
-		List rightCol = Arrays.asList(3, 6, 9);
-		List mainDiag = Arrays.asList(1, 5, 9);
-		List secDiag = Arrays.asList(3, 5, 7);
+				List topRow = Arrays.asList(1, 2, 3);
+				List midRow = Arrays.asList(4, 5, 6);
+				List botRow = Arrays.asList(7, 8, 9);
+				List leftCol = Arrays.asList(1, 4, 7);
+				List midCol = Arrays.asList(2, 5, 8);
+				List rightCol = Arrays.asList(3, 6, 9);
+				List mainDiag = Arrays.asList(1, 5, 9);
+				List secDiag = Arrays.asList(3, 5, 7);
 
-		// Create a list of wining conditions and add all winning conditions to the list
-		List<List> winningConditions = new ArrayList<List>();
-		winningConditions.add(topRow);
-		winningConditions.add(midRow);
-		winningConditions.add(botRow);
-		winningConditions.add(leftCol);
-		winningConditions.add(midCol);
-		winningConditions.add(rightCol);
-		winningConditions.add(mainDiag);
-		winningConditions.add(secDiag);
+				// Create a list of wining conditions and add all winning conditions to the list
+				winningConditions.add(topRow);
+				winningConditions.add(midRow);
+				winningConditions.add(botRow);
+				winningConditions.add(leftCol);
+				winningConditions.add(midCol);
+				winningConditions.add(rightCol);
+				winningConditions.add(mainDiag);
+				winningConditions.add(secDiag);
+	}
+	
+	public static String checkWinner() {
 		// check to see if current player positions contains all position on game board
 		// corresponding to a giving win con
 		for (List l : winningConditions) {
 			if (playerPositions.containsAll(l)) {
 				return "You won!!!";
-			} else if (cpuPositions.containsAll(l)) {
+			} else if (aiPositions.containsAll(l)) {
 				return "CPU won...";
-			} else if (playerPositions.size() + cpuPositions.size() == 9) {
+			} else if (playerPositions.size() + aiPositions.size() == 9) {
 				return "Tie";
 			}
 		}
@@ -149,29 +170,29 @@ public class TicTacToe {
 	}
 	
 	//minimax algorithm
-	public static int minimax(char[] board, int depth, boolean isMaximizing) {
-        int score = evaluate();
+	public static int minimax(char[] gameBoard, int depth, boolean isMaximizing) {
+        int score = evaluate(gameBoard);
         if (score != 0) return score;
-        if (isFull()) return 0;
+        if (isFull(gameBoard)) return 0;
 
         if (isMaximizing) {
             int bestScore = Integer.MIN_VALUE;
-            for (int i = 0; i < board.length; i++) {
-                if (board[i] == ' ') {
-                    board[i] = ai;
-                    int currentScore = minimax(board, depth + 1, false);
-                    board[i] = ' ';
+            for (int i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] == ' ') {
+                    gameBoard[i] = ai;
+                    int currentScore = minimax(gameBoard, depth + 1, false);
+                    gameBoard[i] = ' ';
                     bestScore = Math.max(currentScore, bestScore);
                 }
             }
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
-            for (int i = 0; i < board.length; i++) {
-                if (board[i] == ' ') {
-                    board[i] = player;
-                    int currentScore = minimax(board, depth + 1, true);
-                    board[i] = ' ';
+            for (int i = 0; i < gameBoard.length; i++) {
+                if (gameBoard[i] == ' ') {
+                    gameBoard[i] = player;
+                    int currentScore = minimax(gameBoard, depth + 1, true);
+                    gameBoard[i] = ' ';
                     bestScore = Math.min(currentScore, bestScore);
                 }
             }
@@ -179,28 +200,26 @@ public class TicTacToe {
         }
     }
 	
-	public static int evaluate() {
-		for (int i = 0; i < 3; i++) {
-            if (gameBoard[3 * i] == gameBoard[3 * i + 1] && gameBoard[3 * i + 1] == gameBoard[3 * i + 2]) {
-                if (gameBoard[3 * i] == ai) return +10;
-                else if (gameBoard[3 * i] == player) return -10;
-            }
-
-            if (gameBoard[i] == gameBoard[i + 3] && gameBoard[i + 3] == gameBoard[i + 6]) {
-                if (gameBoard[i] == ai) return +10;
-                else if (gameBoard[i] == player) return -10;
+	public static int evaluate(char[] board) {
+        for (List<Integer> condition : winningConditions) {
+            if (board[condition.get(0) - 1] == board[condition.get(1) - 1]
+                    && board[condition.get(1) - 1] == board[condition.get(2) - 1]) {
+                if (board[condition.get(0) - 1] == ai) {
+                    return +10;
+                } else if (board[condition.get(0) - 1] == player) {
+                    return -10;
+                }
             }
         }
-
-        // Checking Diagonals for X or O victory
-        if (gameBoard[0] == gameBoard[4] && gameBoard[4] == gameBoard[8] || gameBoard[2] == gameBoard[4] && gameBoard[4] == gameBoard[6]) {
-            if (gameBoard[4] == ai) return +10;
-            else if (gameBoard[4] == player) return -10;
-        }
-		return 0;
-	}
+        return 0;
+    }
 	
-	public static boolean isFull() {
-		return true;
-	}
+	public static boolean isFull(char[] board) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i] == ' ') {
+                return false;
+            }
+        }
+        return true;
+    }
 }
