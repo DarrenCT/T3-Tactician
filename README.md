@@ -1,4 +1,4 @@
-# Tic-Tac-Toe
+# T3-Tactician(Tic-Tac-Toe)
 
 Tic Tac Toe in Java
 
